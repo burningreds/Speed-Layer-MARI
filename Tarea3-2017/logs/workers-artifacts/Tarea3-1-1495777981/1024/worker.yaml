@@ -1,0 +1,4 @@
+worker-id: e8609d63-7e2d-4930-8602-31882399045e
+logs.users: []
+logs.groups: []
+topology.submitter.user: Pipe
