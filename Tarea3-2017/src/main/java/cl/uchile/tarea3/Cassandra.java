@@ -28,7 +28,7 @@ public class Cassandra {
         Session session;
 
         cluster = Cluster.builder().addContactPoint("127.0.0.1").build();
-        session = cluster.connect("mari");
+        session = cluster.connect("tarea3");
 
         double probabilidad;
         LocalDate date;

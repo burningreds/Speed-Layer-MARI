@@ -36,7 +36,7 @@ public class ClientTotalAvg {
         
         for (Row row : results) {
             avg = (double)row.getDouble("total") / (double)row.getLong("count");
-            System.out.println(row.getString("client" + ": " + avg));
+            System.out.println(row.getString("client") + ": " + avg);
         }
         
         cluster.close();

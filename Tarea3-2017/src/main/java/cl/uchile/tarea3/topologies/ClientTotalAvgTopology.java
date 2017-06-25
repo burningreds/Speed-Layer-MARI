@@ -18,7 +18,7 @@ import org.apache.storm.kafka.KafkaSpout;
 import org.apache.storm.kafka.bolt.KafkaBolt;
 
 import cl.uchile.tarea3.bolts.ClientTotalToCassandra;
-import cl.uchile.tarea3.bolts.GetCategoriesBolt;
+import cl.uchile.tarea3.bolts.GetClientTotalBoleta;
 
 /**
  * Generates (clientId, totalSum, boletasCount) table
@@ -63,7 +63,7 @@ public class ClientTotalAvgTopology {
         builder.setSpout("KafkaSpout", kafkaSpout);
         
         //
-        builder.setBolt("GetClientTotalBoleta", new GetCategoriesBolt(), 4)
+        builder.setBolt("GetClientTotalBoleta", new GetClientTotalBoleta(), 4)
                 .shuffleGrouping("KafkaSpout");        
         builder.setBolt("ClientTotal", new ClientTotalToCassandra(), 4)
         		.shuffleGrouping("GetClientTotalBoleta");

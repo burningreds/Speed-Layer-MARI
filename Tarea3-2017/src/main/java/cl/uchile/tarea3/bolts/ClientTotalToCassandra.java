@@ -29,17 +29,18 @@ public class ClientTotalToCassandra extends CassandraBaseBolt {
 
     @Override
     public void execute(Tuple tuple, BasicOutputCollector collector) {
-        double totalSum = 0;
-        long count = 0;
         String clientId = tuple.getStringByField("clientId");
         double totalBoleta = tuple.getDoubleByField("total"); 
         System.out.println("Cliente: " + clientId + ": " + totalBoleta);
         
+        double totalSum = totalBoleta;
+        long count = 1;
+        
         //Consultamos por el registro con id cliente
         ResultSet results = session.execute("SELECT * FROM client_total WHERE client ='" + clientId + "'");
         for (Row row : results) {
-            totalSum = row.getDouble("total") + totalBoleta;
-            count = row.getLong("count") + 1;
+            totalSum += row.getDouble("total");
+            count += row.getLong("count");
         }
 
         Statement statement = QueryBuilder.insertInto("client_total")
