@@ -11,6 +11,7 @@ Se responden las siguientes consultas haciendo procesamiento en tiempo real:
 - ¿Cuál es el promedio por boleta de cada cliente?
 - ¿Cuales son los 10 productos más vendidos?
 - ¿En qué sucursal se hacen más ventas?
+- Y como bonus: ubicación (longitud y latitud) de cada sucursal.
 
 Además se genera un archivo json con las ubicaciones de sucursales para visualizaciones con D3.
 
@@ -47,8 +48,7 @@ Para cada consulta definida anteriormente se tiene una topología y una clase qu
 - ¿Cuál es el promedio por boleta de cada cliente?: Se genera una tbla con total compra y cantidad de compras por cliente con ClientTotalAvgTopology y se consulta obteniendo promedio con ClientTotalAvg.
 - ¿Cuales son los 10 productos más vendidos?: Se genera un top 10 con TopProductsTopology y se consulta con TopProducts.
 - ¿En qué sucursal se hacen más ventas?: Se genera una tabla con la sucursal con más ventas y sus datos y se consulta con TopSucursal
-
-Además para generar el json con las ubicaciones de las sucursales: Se genera una tabla para las sucursales, su latitud y longitud y se consulta con SucursalLocations, la cual además genera el archivo json.
+- **Bonus** Para generar el json con las ubicaciones de las sucursales: Se genera una tabla para las sucursales, su latitud y longitud con SucursalLocationsTopology y se consulta con SucursalLocations, la cual además genera el archivo json.
 
 ### Bonus
 
