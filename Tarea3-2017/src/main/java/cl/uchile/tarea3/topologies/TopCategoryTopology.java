@@ -26,7 +26,7 @@ import cl.uchile.tarea3.bolts.WordCountBolt;
 
 /**
  * Generates top10products table for querying
- * Table gets updated with new counts
+ * Table gets updated with new counts every 60 secs
  * @author FelipeEsteban
  */
 @SuppressWarnings("deprecation")

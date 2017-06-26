@@ -27,6 +27,7 @@ import cl.uchile.tarea3.bolts.TopProductsToCassandra;
 /**
  * Generates top 10 (itemId, count, update_date) table
  * for querying
+ * Updates every 60 secs
  * @author FelipeEsteban
  */
 @SuppressWarnings("deprecation")
@@ -66,7 +67,6 @@ public class TopProductsTopology {
         //Accedemos al Spout de Kafka definido previamente
         builder.setSpout("KafkaSpout", kafkaSpout);
         
-        //
         builder.setBolt("GetProducts", new GetProductsBolt(), 4)
                 .shuffleGrouping("KafkaSpout");              
         builder.setBolt("ProductCount", new ProductCountBolt(), 4)

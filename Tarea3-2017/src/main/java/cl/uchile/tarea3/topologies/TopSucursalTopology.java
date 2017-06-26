@@ -19,25 +19,26 @@ import org.apache.storm.topology.TopologyBuilder;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.kafka.KafkaSpout;
 import org.apache.storm.kafka.bolt.KafkaBolt;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import cl.uchile.tarea3.bolts.GetSucursalesBolt;
-import cl.uchile.tarea3.bolts.SucursalesFromCassandra;
-import cl.uchile.tarea3.bolts.SucursalesToCassandra;
-import cl.uchile.tarea3.bolts.TopCategoriesToCassandra;
+import cl.uchile.tarea3.bolts.GetSucursalSalesBolt;
+import cl.uchile.tarea3.bolts.SucursalTotalSalesBolt;
+import cl.uchile.tarea3.bolts.TopSucursalToCassandra;
 
 /**
- *
+ * Generates top (sucursalId, total_sales, address, update_date) 
+ * table for querying
+ * Updates every 60 secs
  * @author FelipeEsteban
  */
 @SuppressWarnings("deprecation")
 public class TopSucursalTopology {
 
-    /**
+    /** 
+     * Generates top sucursal (sucursalId, totalSales, address, update_date) table
+     * for querying
+     * Updates every 60 secs
      * @param args the command line arguments
      */
-    private static final Logger LOG = LoggerFactory.getLogger(TopSucursalTopology.class);
 
     public static void main(String[] args) {
         //Configuracion de Storm para que lea la cola Local de Kafka
@@ -74,22 +75,19 @@ public class TopSucursalTopology {
         builder.setSpout("KafkaSpout", kafkaSpout);
         
         //
-        builder.setBolt("GetSucursales", new GetSucursalesBolt(), 4)
+        builder.setBolt("GetSucursalSales", new GetSucursalSalesBolt(), 4)
                 .shuffleGrouping("KafkaSpout");        
-        builder.setBolt("SucursalesCount", new SucursalesToCassandra(), 4)
-        		.shuffleGrouping("GetSucursales");      
-        builder.setBolt("GetSucursalesCount", new SucursalesFromCassandra(), 4)
-        		.shuffleGrouping("SucursalesCount");
-        builder.setBolt("IntermediateRanker", new IntermediateRankingsBolt(10), 4)
-        		.fieldsGrouping("GetSucursalesCount", new Fields(
-                "obj"));
-        builder.setBolt("FinalTopCategories", new TotalRankingsBolt(10))
+        builder.setBolt("SucursalTotalSales", new SucursalTotalSalesBolt(), 4)
+        		.fieldsGrouping("GetSucursalSales", new Fields("sucursal"));
+        builder.setBolt("IntermediateRanker", new IntermediateRankingsBolt(1,60), 4)
+        		.shuffleGrouping("SucursalTotalSales");
+        builder.setBolt("FinalTopSucursal", new TotalRankingsBolt(1,60))
         		.globalGrouping("IntermediateRanker");
-        builder.setBolt("TopCategoriesToCassandra", new TopCategoriesToCassandra(), 4)
-        		.shuffleGrouping("FinalTopCategories");
+        builder.setBolt("TopSucursalToCassandra", new TopSucursalToCassandra(), 4)
+        		.shuffleGrouping("FinalTopSucursal");
 
         LocalCluster cluster = new LocalCluster();
-        cluster.submitTopology("Tarea3", config, builder.createTopology());
+        cluster.submitTopology("TopSucursal", config, builder.createTopology());
 
     }
 
