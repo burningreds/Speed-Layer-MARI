@@ -1,0 +1,105 @@
+<html>
+<head>
+  <title>Tarea 4 -D3.js - Opcional</title>
+  <meta charset="utf-8" />
+  <script src="d3.v3.min.js" type="text/JavaScript"></script>
+  <script src="colorbrewer.js" type="text/JavaScript"></script>
+  <script src="queue.js" type="text/JavaScript"></script>
+</head>
+<style>
+  svg {
+    /*Tamaño del svg que sostiene el mapa*/
+    height: 4350px;
+    width: 800px;
+    border: 1px solid gray;
+  }
+  
+  /*Colores de los paises*/
+  .countries {
+    fill: gray;
+    fill-opacity: .5;
+    stroke: black;
+    stroke-width: 1px;
+  }
+
+</style>
+<body>
+
+  <div id="viz">
+    <svg>
+    </svg>
+  </div>
+  <div id="controls" />
+</body>
+
+<script>
+  /*
+  //Ejemplo sencillo
+  var matrix = [
+    [11975,  5871, 8916, 2868],
+    [ 1951, 10048, 2060, 6171],
+    [ 8010, 16145, 8090, 8045],
+    [ 1013,   990,  940, 6907]
+  ];
+
+  var tr = d3.select("body").append("table").selectAll("tr")
+      .data(matrix)
+      .enter().append("tr");
+ 
+  var td = tr.selectAll("td")
+      .data(function(d) { return d; })
+      .enter().append("td")
+      .text(function(d) { return d; });*/
+  
+
+  //Esperamos a cargar los datos para pasarlos a la funcion createMap
+  //librería para poder pasar más de 1 archivo
+  //.json y .csv permiten parsear
+  queue()
+    .defer(d3.json, "comunas.geojson")
+    .defer(d3.json, "locations.json")
+	//espera a que se carguen todos los archivos y luego lo envía a la función createMap
+    .await(function(error, file1, file2) {
+      createMap(file1, file2);
+    });
+  //https://github.com/d3/d3-request/blob/master/README.md#json
+  //solo hace el mapa (sin ubicar las ciudades), por lo mismo en caso de usar este la función createMap no debería tener locations como argumento
+  //d3.json("world.geojson", createMap);
+  
+  function createMap(countries, locations) {
+    //Variables para transaldar el mapa, la idea es que tengan las mismas dimensiones del SVG o se saldrá de este
+	//podríamos "jugar" hasta que solo se vea un continente o un solo país
+    var width = 13280;
+    var height = -3000;
+
+    //Tipo de Mapa
+    //https://github.com/d3/d3-3.x-api-reference/blob/master/Geo-Projections.md#mercator
+    var projection = d3.geo.mercator()
+    //se puede cambiar el "zoom"
+	.scale(5000)
+    .translate([width / 2, height / 2]);
+
+    //https://github.com/d3/d3-3.x-api-reference/blob/master/Geo-Paths.md#path_projection
+	var geoPath = d3.geo.path().projection(projection);
+
+    //https://github.com/d3/d3-3.x-api-reference/blob/master/API-Reference.md#selections
+    //https://github.com/d3/d3-3.x-api-reference/blob/master/Selections.md#enter
+	//acá se dibuja el mapa
+    d3.select("svg").selectAll("path").data(countries.features)
+      .enter()
+      .append("path") // Por cada features, creará un path
+      .attr("d", geoPath)  //Dibujamos el mapa con cada pais (features)
+      .style("fill", "gray"); //Cambiamos el color definido en el style
+
+
+    d3.select("svg").selectAll("circle").data(locations)
+      .enter()
+      .append("circle") //Escogemos circulo.
+      .style("fill", "red") //Le cambiamos el estilo
+      .attr("class", "locations") //Le damos la clase locations
+      .attr("r", 0.3) //Radio
+      .attr("cx", function(d) {return projection([d.lng,d.lat])[0]}) //Posicion en X del elemento
+      .attr("cy", function(d) {return projection([d.lng,d.lat])[1]}); //Posicion en Y del elemento
+  };
+</script>
+</html>
