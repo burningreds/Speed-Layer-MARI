@@ -23,7 +23,8 @@ import cl.uchile.tarea3.bolts.GetClientTotalBoleta;
 /**
  * Generates (clientId, totalSum, boletasCount) table
  * for querying
- * @author FelipeEsteban
+ * Based on LocalStorm
+ * @author Paula
  */
 @SuppressWarnings("deprecation")
 public class ClientTotalAvgTopology {

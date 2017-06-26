@@ -28,18 +28,12 @@ import cl.uchile.tarea3.bolts.TopSucursalToCassandra;
  * Generates top (sucursalId, total_sales, address, update_date) 
  * table for querying
  * Updates every 60 secs
- * @author FelipeEsteban
+ * Based on LocalStorm
+ * @author Paula
  */
 @SuppressWarnings("deprecation")
 public class TopSucursalTopology {
-
-    /** 
-     * Generates top sucursal (sucursalId, totalSales, address, update_date) table
-     * for querying
-     * Updates every 60 secs
-     * @param args the command line arguments
-     */
-
+	
     public static void main(String[] args) {
         //Configuracion de Storm para que lea la cola Local de Kafka
         String BROKER_LIST = "localhost:9092";

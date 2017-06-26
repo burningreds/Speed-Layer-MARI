@@ -10,6 +10,11 @@ import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
 
+/**
+ * Obtains sucursal id and total from every boleta. * 
+ * @author Paula
+ *
+ */
 public class SucursalTotalSalesBolt extends BaseBasicBolt {
 	Map<Integer, Double> totalSum = new HashMap<Integer, Double>();
 

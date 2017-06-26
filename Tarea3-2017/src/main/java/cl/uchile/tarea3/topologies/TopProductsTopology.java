@@ -28,7 +28,8 @@ import cl.uchile.tarea3.bolts.TopProductsToCassandra;
  * Generates top 10 (itemId, count, update_date) table
  * for querying
  * Updates every 60 secs
- * @author FelipeEsteban
+ * Based on LocalStorm
+ * @author Paula
  */
 @SuppressWarnings("deprecation")
 public class TopProductsTopology {

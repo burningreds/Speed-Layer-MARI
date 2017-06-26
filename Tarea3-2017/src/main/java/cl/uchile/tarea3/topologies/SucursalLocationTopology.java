@@ -13,27 +13,23 @@ import org.apache.storm.kafka.SpoutConfig;
 import org.apache.storm.kafka.StringScheme;
 import org.apache.storm.kafka.ZkHosts;
 import org.apache.storm.spout.SchemeAsMultiScheme;
-import org.apache.storm.starter.bolt.IntermediateRankingsBolt;
-import org.apache.storm.starter.bolt.TotalRankingsBolt;
 import org.apache.storm.topology.TopologyBuilder;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.kafka.KafkaSpout;
 import org.apache.storm.kafka.bolt.KafkaBolt;
 
-import cl.uchile.tarea3.bolts.GetCategoriesBolt;
-import cl.uchile.tarea3.bolts.TopCategoriesToCassandra;
-import cl.uchile.tarea3.bolts.WordCountBolt;
+import cl.uchile.tarea3.bolts.GetSucursalLocBolt;
+import cl.uchile.tarea3.bolts.SucursalLocToCassandra;
 
 /**
- * Generates top10products table for querying
- * Table gets updated with new counts every 60 secs
+ * Generates sucursal locations table
+ * for later visualization
  * Based on LocalStorm
  * @author Paula
  */
 @SuppressWarnings("deprecation")
-public class TopCategoryTopology {
-
-    public static void main(String[] args) {
+public class SucursalLocationTopology {
+	public static void main(String[] args) {
         //Configuracion de Storm para que lea la cola Local de Kafka
         String BROKER_LIST = "localhost:9092";
         String KAFKA_TOPIC = "kafkaQ";
@@ -67,19 +63,14 @@ public class TopCategoryTopology {
         //Accedemos al Spout de Kafka definido previamente
         builder.setSpout("KafkaSpout", kafkaSpout);
         
-        builder.setBolt("GetCategories", new GetCategoriesBolt(), 4)
-                .shuffleGrouping("KafkaSpout"); 
-        builder.setBolt("CategoriesCount", new WordCountBolt(), 4)
-				.fieldsGrouping("GetCategories", new Fields("category"));
-        builder.setBolt("IntermediateRanker", new IntermediateRankingsBolt(10, 60), 4)
-        		.shuffleGrouping("CategoriesCount");
-        builder.setBolt("FinalTopCategories", new TotalRankingsBolt(10, 60))
-        		.globalGrouping("IntermediateRanker");
-        builder.setBolt("TopCategoriesToCassandra", new TopCategoriesToCassandra(), 4)
-        		.shuffleGrouping("FinalTopCategories");
+        //Bolts
+        builder.setBolt("GetSucursalLoc", new GetSucursalLocBolt(), 4)
+                .shuffleGrouping("KafkaSpout");        
+        builder.setBolt("SucursalLocToCassandra", new SucursalLocToCassandra(), 4)
+        		.fieldsGrouping("GetSucursalLoc", new Fields("sucursal"));
 
         LocalCluster cluster = new LocalCluster();
-        cluster.submitTopology("TopCategories", config, builder.createTopology());
+        cluster.submitTopology("SucursalLocation", config, builder.createTopology());
 
     }
 
