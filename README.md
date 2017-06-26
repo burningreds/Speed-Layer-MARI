@@ -1,6 +1,8 @@
 # Speed-Layer-MARI
 Tarea 3 Big Data
 
+Grupo 7 (Gabriel Dintrans, Paula Ríos, Carlos Vega)
+
 ### Descripción
 Se tienen datos de boletas del retail MARI, los cuales se almacenan a una cola local en Kafka.
 
@@ -47,3 +49,7 @@ Para cada consulta definida anteriormente se tiene una topología y una clase qu
 - ¿En qué sucursal se hacen más ventas?: Se genera una tabla con la sucursal con más ventas y sus datos y se consulta con TopSucursal
 
 Además para generar el json con las ubicaciones de las sucursales: Se genera una tabla para las sucursales, su latitud y longitud y se consulta con SucursalLocations, la cual además genera el archivo json.
+
+### Bonus
+
+En la carpeta Bonus se encuentra el código para la visualización de las sucursales en el mapa de Chile (Visualizacion_comunas.html) usando la librería D3.js. Se utiliza un archivo .json con 1000 sucursales el cual se encuentra en la misma carpeta. Se puede hacer zoom con el navegador para ver más en detalle.
