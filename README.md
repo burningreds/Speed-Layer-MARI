@@ -19,6 +19,7 @@ CREATE KEYSPACE tarea3 WITH REPLICATION = {'class' : 'SimpleStrategy','replicati
 Y se necesitan las siguientes tablas:
 ```
 CREATE TABLE top10categories (category text, count bigint, update_datetime timestamp, PRIMARY KEY (category));
-CREATE TABLE client_total (client text, count bigint, update_date date, PRIMARY KEY (client));
-CREATE TABLE top10products (item_id int, total double, count bigint, name text, update_datetime timestamp, PRIMARY KEY (item_id));
+CREATE TABLE client_total (client text, total double, count bigint, update_date date, PRIMARY KEY (client));
+CREATE TABLE top10products (item_id int, count bigint, name text, update_datetime timestamp, PRIMARY KEY (item_id));
+CREATE TABLE topsucursal (sucursal_id int, total double, address text, update_datetime timestamp, PRIMARY KEY (sucursal_id));
 ```
