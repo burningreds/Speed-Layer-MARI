@@ -14,19 +14,19 @@ import org.apache.storm.kafka.StringScheme;
 import org.apache.storm.kafka.ZkHosts;
 import org.apache.storm.spout.SchemeAsMultiScheme;
 import org.apache.storm.starter.bolt.IntermediateRankingsBolt;
+import org.apache.storm.starter.bolt.RollingCountBolt;
 import org.apache.storm.starter.bolt.TotalRankingsBolt;
 import org.apache.storm.topology.TopologyBuilder;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.kafka.KafkaSpout;
 import org.apache.storm.kafka.bolt.KafkaBolt;
 
-import cl.uchile.tarea3.bolts.CategoriesFromCassandra;
-import cl.uchile.tarea3.bolts.CategoriesToCassandra;
 import cl.uchile.tarea3.bolts.GetCategoriesBolt;
 import cl.uchile.tarea3.bolts.TopCategoriesToCassandra;
 
 /**
- *
+ * Generates top10products table for querying
+ * Table gets updated with new counts
  * @author FelipeEsteban
  */
 @SuppressWarnings("deprecation")
@@ -71,21 +71,18 @@ public class TopCategoryTopology {
         builder.setSpout("KafkaSpout", kafkaSpout);
         
         builder.setBolt("GetCategories", new GetCategoriesBolt(), 4)
-                .shuffleGrouping("KafkaSpout");     
-        builder.setBolt("CategoriesCount", new CategoriesToCassandra(), 4)
-        		.fieldsGrouping("GetCategories", new Fields("category"));        
-        builder.setBolt("GetCategoriesCount", new CategoriesFromCassandra(), 4)
-        		.shuffleGrouping("CategoriesCount");        
+                .shuffleGrouping("KafkaSpout"); 
+        builder.setBolt("CategoriesCount", new RollingCountBolt(),4)
+        		.fieldsGrouping("GetCategories", new Fields("category"));
         builder.setBolt("IntermediateRanker", new IntermediateRankingsBolt(10), 4)
-        		.fieldsGrouping("GetCategoriesCount", new Fields(
-                "obj"));
+        		.shuffleGrouping("CategoriesCount");
         builder.setBolt("FinalTopCategories", new TotalRankingsBolt(10))
         		.globalGrouping("IntermediateRanker");
         builder.setBolt("TopCategoriesToCassandra", new TopCategoriesToCassandra(), 4)
         		.shuffleGrouping("FinalTopCategories");
 
         LocalCluster cluster = new LocalCluster();
-        cluster.submitTopology("Tarea3", config, builder.createTopology());
+        cluster.submitTopology("TopCategories", config, builder.createTopology());
 
     }
 

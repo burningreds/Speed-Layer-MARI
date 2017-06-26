@@ -69,7 +69,7 @@ public class ClientTotalAvgTopology {
         		.shuffleGrouping("GetClientTotalBoleta");
 
         LocalCluster cluster = new LocalCluster();
-        cluster.submitTopology("Tarea3", config, builder.createTopology());
+        cluster.submitTopology("ClientTotalAvg", config, builder.createTopology());
 
     }
 

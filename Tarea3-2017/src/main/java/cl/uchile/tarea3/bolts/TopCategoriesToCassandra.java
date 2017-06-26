@@ -5,11 +5,14 @@
  */
 package cl.uchile.tarea3.bolts;
 
-import com.datastax.driver.core.LocalDate;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
+
+import java.sql.Timestamp;
+import java.util.List;
+
+import org.apache.storm.starter.tools.Rankable;
+import org.apache.storm.starter.tools.Rankings;
 import org.apache.storm.topology.BasicOutputCollector;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.tuple.Tuple;
@@ -27,15 +30,20 @@ public class TopCategoriesToCassandra extends CassandraBaseBolt {
 
     @Override
     public void execute(Tuple tuple, BasicOutputCollector collector) {
-        String categoryName = tuple.getStringByField("category");
-        String count = tuple.getStringByField("count");
-        System.out.println("Categoría: " + categoryName + count);
-        Statement statement = QueryBuilder.insertInto("top10categories")
-        		.value("category", categoryName)
-        		.value("count", count)
-        		.value("update_date", LocalDate.fromMillisSinceEpoch(System.currentTimeMillis()));
-        LOG.debug(statement.toString());
-        session.execute(statement);
+    	Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+    	session.execute("TRUNCATE top10categories");
+    	List<Rankable> rankings = ((Rankings)tuple.getValue(0)).getRankings();
+    	for (Rankable rank : rankings) {
+    		String categoryName = rank.getObject().toString();
+    		long count = rank.getCount();
+    		System.out.println("Categoría: " + categoryName + count);
+    		Statement statement = QueryBuilder.insertInto("top10categories")
+    				.value("category", categoryName)
+    				.value("count", count)
+    				.value("update_datetime", timestamp);
+    		LOG.debug(statement.toString());
+    		session.execute(statement);
+    	}
     }
 
     @Override
