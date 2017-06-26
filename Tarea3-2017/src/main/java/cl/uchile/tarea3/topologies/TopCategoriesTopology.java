@@ -25,13 +25,13 @@ import cl.uchile.tarea3.bolts.TopCategoriesToCassandra;
 import cl.uchile.tarea3.bolts.WordCountBolt;
 
 /**
- * Generates top10products table for querying
+ * Generates top10categories table for querying
  * Table gets updated with new counts every 60 secs
  * Based on LocalStorm
  * @author Paula
  */
 @SuppressWarnings("deprecation")
-public class TopCategoryTopology {
+public class TopCategoriesTopology {
 
     public static void main(String[] args) {
         //Configuracion de Storm para que lea la cola Local de Kafka
