@@ -34,7 +34,7 @@ CREATE TABLE sucursal_location (sucursal_id int, lng double, lat double, PRIMARY
 
 1. Tener corriendo Zookeeper, Kafka y Cassandra.
 2. Correr cola Kafka
-3. Correr la topología correspondiente (ver sección siguiente). Las tablas se actualizan cada 60 segundos, por lo que se recomienda correrla por al menos esa cantidad de tiempo para obtener resultados.
+3. Correr la topología correspondiente a la consulta que queremos responder (ver sección siguiente). Las tablas se actualizan cada 60 segundos, por lo que se recomienda correrla por al menos esa cantidad de tiempo para obtener resultados.
 4. Correr la consulta a la tabla generada por la topología.
 
 ### Topologías y consultas
