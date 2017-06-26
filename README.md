@@ -14,6 +14,8 @@ Además se genera un archivo json con las ubicaciones de sucursales para visuali
 
 Para esto se hace procesamiento en stream usando Apache Storm y se almacenan las consultas procesadas en Apache Cassandra.
 
+### Tablas y keyspace necesarios en Cassandra
+
 Se utiliza el keyspace:
 ```
 CREATE KEYSPACE tarea3 WITH REPLICATION = {'class' : 'SimpleStrategy','replication_factor' : 1};
