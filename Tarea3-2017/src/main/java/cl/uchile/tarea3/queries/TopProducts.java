@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cl.uchile.tarea3;
+package cl.uchile.tarea3.queries;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ResultSet;
@@ -12,12 +12,12 @@ import com.datastax.driver.core.Session;
 import java.util.UUID;
 
 /**
- * Q2 Avg by client Query:
- * Selects avg amount spent per purchase by each client 
+ * Q3 Top 10 Products Query:
+ * Selects top most purchased products
  * @author Paula
  *
  */
-public class ClientTotalAvg {
+public class TopProducts {
 
     /**
      * @param args the command line arguments
@@ -29,14 +29,18 @@ public class ClientTotalAvg {
 
         cluster = Cluster.builder().addContactPoint("127.0.0.1").build();
         session = cluster.connect("tarea3");
-
-        double avg = 0;
         
-        ResultSet results = session.execute("SELECT * FROM client_total");
+        int itemId = 0;
+        long count = 0;
+        String name;
+        
+        ResultSet results = session.execute("SELECT * FROM top10products");
         
         for (Row row : results) {
-            avg = (double)row.getDouble("total") / (double)row.getLong("count");
-            System.out.println(row.getString("client") + ": " + avg);
+            itemId = row.getInt("item_id");
+            count = row.getLong("count");
+            name = row.getString("name");
+            System.out.println(itemId + " " + name + ": " + count);
         }
         
         cluster.close();
