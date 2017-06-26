@@ -14,7 +14,6 @@ import org.apache.storm.kafka.StringScheme;
 import org.apache.storm.kafka.ZkHosts;
 import org.apache.storm.spout.SchemeAsMultiScheme;
 import org.apache.storm.starter.bolt.IntermediateRankingsBolt;
-import org.apache.storm.starter.bolt.RollingCountBolt;
 import org.apache.storm.starter.bolt.TotalRankingsBolt;
 import org.apache.storm.topology.TopologyBuilder;
 import org.apache.storm.tuple.Fields;
@@ -23,6 +22,7 @@ import org.apache.storm.kafka.bolt.KafkaBolt;
 
 import cl.uchile.tarea3.bolts.GetCategoriesBolt;
 import cl.uchile.tarea3.bolts.TopCategoriesToCassandra;
+import cl.uchile.tarea3.bolts.WordCountBolt;
 
 /**
  * Generates top10products table for querying
@@ -72,11 +72,11 @@ public class TopCategoryTopology {
         
         builder.setBolt("GetCategories", new GetCategoriesBolt(), 4)
                 .shuffleGrouping("KafkaSpout"); 
-        builder.setBolt("CategoriesCount", new RollingCountBolt(),4)
-        		.fieldsGrouping("GetCategories", new Fields("category"));
-        builder.setBolt("IntermediateRanker", new IntermediateRankingsBolt(10), 4)
+        builder.setBolt("CategoriesCount", new WordCountBolt(), 4)
+				.fieldsGrouping("GetCategories", new Fields("category"));
+        builder.setBolt("IntermediateRanker", new IntermediateRankingsBolt(10, 60), 4)
         		.shuffleGrouping("CategoriesCount");
-        builder.setBolt("FinalTopCategories", new TotalRankingsBolt(10))
+        builder.setBolt("FinalTopCategories", new TotalRankingsBolt(10, 60))
         		.globalGrouping("IntermediateRanker");
         builder.setBolt("TopCategoriesToCassandra", new TopCategoriesToCassandra(), 4)
         		.shuffleGrouping("FinalTopCategories");

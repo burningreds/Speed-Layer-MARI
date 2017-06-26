@@ -21,13 +21,11 @@ import org.apache.storm.kafka.KafkaSpout;
 import org.apache.storm.kafka.bolt.KafkaBolt;
 
 import cl.uchile.tarea3.bolts.GetProductsBolt;
-import cl.uchile.tarea3.bolts.ProductsFromCassandra;
-import cl.uchile.tarea3.bolts.ProductsToCassandra;
-import cl.uchile.tarea3.bolts.TopCategoriesToCassandra;
+import cl.uchile.tarea3.bolts.ProductCountBolt;
+import cl.uchile.tarea3.bolts.TopProductsToCassandra;
 
 /**
- * Generates product_count (itemId, count, update_date) table
- * and top 10 (itemId, count, update_date) table
+ * Generates top 10 (itemId, count, update_date) table
  * for querying
  * @author FelipeEsteban
  */
@@ -71,20 +69,17 @@ public class TopProductsTopology {
         //
         builder.setBolt("GetProducts", new GetProductsBolt(), 4)
                 .shuffleGrouping("KafkaSpout");              
-        builder.setBolt("ProductsCount", new ProductsToCassandra(), 4)
-        		.fieldsGrouping("GetProducts", new Fields("item"));
-        builder.setBolt("GetProductsCount", new ProductsFromCassandra(), 4)
-        		.shuffleGrouping("ProductsCount"); 
-        builder.setBolt("IntermediateRanker", new IntermediateRankingsBolt(10), 4)
-        		.fieldsGrouping("GetProductsCount", new Fields(
-                "obj"));
-        builder.setBolt("FinalTopCategories", new TotalRankingsBolt(10))
+        builder.setBolt("ProductCount", new ProductCountBolt(), 4)
+        		.fieldsGrouping("GetProducts", new Fields("itemId"));
+        builder.setBolt("IntermediateRanker", new IntermediateRankingsBolt(10, 60), 4)
+				.shuffleGrouping("ProductCount");
+        builder.setBolt("FinalTopProducts", new TotalRankingsBolt(10, 60))
         		.globalGrouping("IntermediateRanker");
-        builder.setBolt("TopProductsToCassandra", new TopCategoriesToCassandra(), 4)
-        		.shuffleGrouping("FinalTopCategories");
+        builder.setBolt("TopProductsToCassandra", new TopProductsToCassandra(), 4)
+        		.shuffleGrouping("FinalTopProducts");
 
         LocalCluster cluster = new LocalCluster();
-        cluster.submitTopology("Tarea3", config, builder.createTopology());
+        cluster.submitTopology("TopProducts", config, builder.createTopology());
 
     }
 

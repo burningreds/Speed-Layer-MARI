@@ -8,9 +8,6 @@ package cl.uchile.tarea3.bolts;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.logging.Level;
 import org.apache.storm.topology.BasicOutputCollector;
@@ -23,8 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Obtains category name from every product bought 
- * in every purchase and the date of the purchase. 
+ * Obtains itemid name from every product in every boleta
  * @author Paula
  *
  */
@@ -44,8 +40,10 @@ public class GetProductsBolt extends BaseBasicBolt {
             while (products.hasNext()) {
                 JsonNode product = products.next();
                 try {
-                	String itemId = product.get("itemId").toString();
-                	collector.emit(new Values(itemId));
+                	int itemId = product.get("itemId").asInt();
+                	String name = product.get("name").toString();
+                	collector.emit(new Values(itemId, name));
+                	//System.out.println(itemId+name);
                 } catch (NullPointerException e) {
                 	;
                 }
@@ -60,6 +58,6 @@ public class GetProductsBolt extends BaseBasicBolt {
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         //nombre que tendran los valores
-        declarer.declare(new Fields("item"));
+        declarer.declare(new Fields("itemId", "name"));
     }
 }
