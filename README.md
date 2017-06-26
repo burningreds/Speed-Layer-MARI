@@ -9,6 +9,8 @@ Se responden las siguientes consultas haciendo procesamiento en tiempo real:
 - ¿Cuales son los 10 productos más vendidos?
 - ¿En qué sucursal se hacen más ventas?
 
+Además se genera un archivo json con las ubicaciones de sucursales para visualizaciones con D3.
+
 Para esto se hace procesamiento en stream usando Apache Storm y se almacenan las consultas procesadas en Apache Cassandra.
 
 Se utiliza el keyspace:
@@ -22,4 +24,5 @@ CREATE TABLE top10categories (category text, count bigint, update_datetime times
 CREATE TABLE client_total (client text, total double, count bigint, update_date date, PRIMARY KEY (client));
 CREATE TABLE top10products (item_id int, count bigint, name text, update_datetime timestamp, PRIMARY KEY (item_id));
 CREATE TABLE topsucursal (sucursal_id int, total_sales double, address text, update_datetime timestamp, PRIMARY KEY (sucursal_id));
+CREATE TABLE sucursal_location (sucursal_id int, lng double, lat double, PRIMARY KEY (sucursal_id));
 ```
