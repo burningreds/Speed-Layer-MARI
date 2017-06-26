@@ -32,7 +32,7 @@ CREATE TABLE topsucursal (sucursal_id int, total_sales double, address text, upd
 CREATE TABLE sucursal_location (sucursal_id int, lng double, lat double, PRIMARY KEY (sucursal_id));
 ```
 
-### Instrucciones para correr consultas:
+### Instrucciones para correr consultas
 
 1. Tener corriendo Zookeeper, Kafka y Cassandra.
 2. Correr cola Kafka
