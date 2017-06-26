@@ -52,4 +52,4 @@ Además para generar el json con las ubicaciones de las sucursales: Se genera un
 
 ### Bonus
 
-En la carpeta Bonus se encuentra el código para la visualización de las sucursales en el mapa de Chile (Visualizacion_comunas.html) usando la librería D3.js. Se utiliza un archivo .json con 1000 sucursales el cual se encuentra en la misma carpeta. Se puede hacer zoom con el navegador para ver más en detalle.
+En la carpeta Bonus se encuentra el código para la visualización de las sucursales en el mapa de Chile usando la librería D3.js (Visualizacion_comunas.html). Se utiliza un archivo .json con 1000 sucursales el cual se encuentra en la misma carpeta. Se puede hacer zoom con el navegador para ver más en detalle.
