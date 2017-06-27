@@ -31,7 +31,7 @@ public class TopProductsToCassandra extends CassandraBaseBolt {
     @Override
     public void execute(Tuple tuple, BasicOutputCollector collector) {
     	Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-    	session.execute("TRUNCATE top10categories");
+    	session.execute("TRUNCATE top10products");
     	List<Rankable> rankings = ((Rankings)tuple.getValue(0)).getRankings();
     	for (Rankable rank : rankings) {
     		int itemId = Integer.parseInt(rank.getObject().toString());
